@@ -10,8 +10,6 @@ class MediaPage extends StatefulWidget {
 class _MediaPageState extends State<MediaPage> {
   @override
   Widget build(BuildContext context) {
-    return const Card(
-      child: Text("媒体库"),
-    );
+    return const Placeholder();
   }
 }

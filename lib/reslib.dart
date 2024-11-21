@@ -1,7 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:wdplayer/addlib.dart';
+import 'package:wdplayer/editlib.dart';
 import 'package:wdplayer/libcard.dart';
 import 'package:wdplayer/utils/store.dart';
 
@@ -36,6 +36,7 @@ class _ResLibPageState extends State<ResLibPage> {
         });
       });
     });
+    final theme = Theme.of(context);
     return Scaffold(
       body: FutureBuilder(
         future: _futureConfs,
@@ -51,32 +52,29 @@ class _ResLibPageState extends State<ResLibPage> {
           if (snapshot.hasError) {
             return Text('${snapshot.error}');
           }
-          return const CircularProgressIndicator();
+          return Center(child: const CircularProgressIndicator());
         },
       ),
       floatingActionButton: OpenContainer(
+        tappable: false,
         closedBuilder: (BuildContext context, callback) {
-          return SizedBox(
-            height: 56,
-            width: 56,
-            child: Center(
-              child: Icon(
-                Icons.add,
-                size: 24,
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
-              ),
-            ),
+          return FloatingActionButton(
+            elevation: 0,
+            onPressed: callback,
+            shape: Border(),
+            child: Icon(Icons.add),
           );
         },
-        closedElevation: 6,
+        closedElevation: theme.floatingActionButtonTheme.elevation ?? 6,
         closedShape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
             Radius.circular(16),
           ),
         ),
-        closedColor: Theme.of(context).colorScheme.primaryContainer,
+        closedColor: theme.floatingActionButtonTheme.backgroundColor ??
+            theme.colorScheme.primaryContainer,
         openBuilder: (BuildContext context, callback) {
-          return const AddLibPage();
+          return const EditLibPage();
         },
       ),
     );

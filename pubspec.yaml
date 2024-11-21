@@ -46,6 +46,8 @@ dependencies:
     hosted: https://pub.isar-community.dev
     version: 3.1.8
   dynamic_color: ^1.7.0
+  mime: ^2.0.0
+  path: ^1.9.0
 
 dev_dependencies:
   flutter_test:

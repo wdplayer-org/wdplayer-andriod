@@ -6,11 +6,13 @@ class PasswordField extends StatefulWidget {
     this.labelText,
     this.hintText,
     this.onSaved,
+    this.initialValue,
   });
 
   final String? labelText;
   final String? hintText;
   final FormFieldSetter<String>? onSaved;
+  final String? initialValue;
 
   @override
   State<PasswordField> createState() => _PasswordFieldState();
@@ -22,6 +24,7 @@ class _PasswordFieldState extends State<PasswordField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: widget.initialValue,
       obscureText: obscureText,
       keyboardType: TextInputType.visiblePassword,
       decoration: InputDecoration(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wdplayer/editlib.dart';
+import 'package:wdplayer/utils/funcs.dart';
 import 'package:wdplayer/utils/store.dart';
 
 class LibCard extends StatefulWidget {
@@ -21,20 +23,58 @@ class _LibCardState extends State<LibCard> {
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            leading: Icon(Icons.album),
-            title: Text(widget.conf.name),
+            leading: Icon(Icons.language),
+            title: Text(widget.conf.name!),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
-              TextButton(
-                child: Text('编辑'),
-                onPressed: () {/* ... */},
+              IconButton(
+                icon: Icon(Icons.refresh),
+                onPressed: () {
+                  /** */
+                },
               ),
               SizedBox(width: 8),
-              TextButton(
-                child: Text('删除'),
-                onPressed: () {/* ... */},
+              IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return EditLibPage(
+                          conf: widget.conf,
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+              SizedBox(width: 8),
+              IconButton(
+                icon: Icon(Icons.delete),
+                onPressed: () async {
+                  showConfirmDialog(
+                    context,
+                    title: '确认删除？',
+                    text: '删除后影片信息也会同步删除',
+                    onOK: () async {
+                      final isar = await getIsar();
+                      await isar.writeTxn(() async {
+                        final result =
+                            await isar.wDConfs.delete(widget.conf.id!);
+                        if (!context.mounted) {
+                          return;
+                        }
+                        showSnackBar(
+                          context,
+                          text: result ? '删除成功' : '删除失败',
+                        );
+                      });
+                    },
+                  );
+                },
               ),
               SizedBox(width: 8),
             ],

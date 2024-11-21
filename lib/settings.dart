@@ -10,8 +10,6 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
-    return const Card(
-      child: Text("设置"),
-    );
+    return Placeholder();
   }
 }

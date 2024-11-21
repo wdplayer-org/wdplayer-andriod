@@ -1,24 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:wdplayer/files/filelist.dart';
+import 'package:wdplayer/utils/store.dart';
 
-class FileFirstPage extends StatefulWidget {
-  const FileFirstPage({super.key});
+class FileFirstPage extends StatelessWidget {
+  const FileFirstPage({
+    super.key,
+    required this.conf,
+  });
 
-  @override
-  State<FileFirstPage> createState() => _FileFirstPageState();
-}
+  final WDConf conf;
 
-class _FileFirstPageState extends State<FileFirstPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('选择文件夹'),
+        title: Text(conf.name!),
       ),
-      body: FielList(),
+      body: FielList(
+        conf: conf,
+      ),
       bottomNavigationBar: BottomAppBar(
         child: FilledButton(
-          onPressed: () {/** */},
+          onPressed: () async {
+            final isar = await getIsar();
+            await isar.writeTxn(() async {
+              await isar.wDConfs.put(conf);
+            });
+            if (!context.mounted) {
+              return;
+            }
+            Navigator.popUntil(
+              context,
+              (route) => route.isFirst,
+            );
+          },
           child: Text('确定'),
         ),
       ),

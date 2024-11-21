@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,7 +13,7 @@ void main() {
   runApp(const MyApp());
 }
 
-const _defaultColorSeed = Colors.blueAccent;
+const _defaultColorSeed = Colors.greenAccent;
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -48,13 +49,22 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.dark,
           );
         }
+        final pageTransitionTheme = PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android: SharedAxisPageTransitionsBuilder(
+              transitionType: SharedAxisTransitionType.horizontal,
+            ),
+          },
+        );
         return MaterialApp(
           title: 'wdplayer',
           theme: ThemeData(
             colorScheme: lightColorScheme,
+            pageTransitionsTheme: pageTransitionTheme,
           ),
           darkTheme: ThemeData(
             colorScheme: darkColorScheme,
+            pageTransitionsTheme: pageTransitionTheme,
           ),
           home: const MyHomePage(),
           debugShowCheckedModeBanner: false,
@@ -74,41 +84,33 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentPageIndex = 0;
 
-  late PageController _pageController;
-
-  @override
-  void initState() {
-    super.initState();
-    _pageController = PageController();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    _pageController.dispose();
-  }
+  final List<Widget> _pageList = [
+    MediaPage(),
+    ResLibPage(),
+    SettingsPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: PageView(
-          controller: _pageController,
-          physics: const NeverScrollableScrollPhysics(),
-          children: const [
-            MediaPage(),
-            ResLibPage(),
-            SettingsPage(),
-          ],
+        child: PageTransitionSwitcher(
+          child: _pageList[_currentPageIndex],
+          transitionBuilder: (
+            child,
+            animation,
+            secondaryAnimation,
+          ) {
+            return FadeThroughTransition(
+              animation: animation,
+              secondaryAnimation: secondaryAnimation,
+              child: child,
+            );
+          },
         ),
       ),
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
-          _pageController.animateToPage(
-            index,
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeInOut,
-          );
           setState(() {
             _currentPageIndex = index;
           });

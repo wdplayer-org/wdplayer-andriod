@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:wdplayer/files/firstpage.dart';
 import 'package:wdplayer/utils/store.dart';
 import 'package:wdplayer/utils/widgets.dart';
 
-class AddLibPage extends StatefulWidget {
-  const AddLibPage({super.key});
+class EditLibPage extends StatefulWidget {
+  const EditLibPage({
+    super.key,
+    this.conf,
+  });
+
+  final WDConf? conf;
 
   @override
-  State<StatefulWidget> createState() => _AddLibState();
+  State<StatefulWidget> createState() => _EditLibState();
 }
 
-class _AddLibState extends State<AddLibPage> {
+class _EditLibState extends State<EditLibPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final _conf = WDConf();
+  late final WDConf _conf;
 
-  String _defPort = '80';
+  late String _defPort;
+
+  @override
+  void initState() {
+    super.initState();
+    _defPort = '80';
+    _conf = widget.conf ?? WDConf();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +46,7 @@ class _AddLibState extends State<AddLibPage> {
             runSpacing: 20,
             children: [
               TextFormField(
+                initialValue: _conf.name,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: '名称',
@@ -48,6 +62,7 @@ class _AddLibState extends State<AddLibPage> {
                 },
               ),
               TextFormField(
+                initialValue: _conf.host,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: '地址',
@@ -99,6 +114,7 @@ class _AddLibState extends State<AddLibPage> {
                   ),
                   Expanded(
                     child: TextFormField(
+                      initialValue: _conf.port?.toString(),
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(),
@@ -115,6 +131,7 @@ class _AddLibState extends State<AddLibPage> {
                 ],
               ),
               TextFormField(
+                initialValue: _conf.username,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: '账号',
@@ -124,12 +141,14 @@ class _AddLibState extends State<AddLibPage> {
                 },
               ),
               PasswordField(
+                initialValue: _conf.password,
                 labelText: '密码',
                 onSaved: (value) {
                   _conf.password = value;
                 },
               ),
               TextFormField(
+                initialValue: _conf.path,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: '路径',
@@ -145,37 +164,17 @@ class _AddLibState extends State<AddLibPage> {
       ),
       bottomNavigationBar: BottomAppBar(
         child: FilledButton(
-          onPressed: () async {
+          onPressed: () {
             if (!_formKey.currentState!.validate()) {
               return;
             }
             _formKey.currentState!.save();
-            // var client = newClient(
-            //   _conf.getUrl(),
-            //   user: _conf.username,
-            //   password: _conf.password,
-            // );
-            // try {
-            //   await client.ping();
-            // } catch (e) {
-            //   if (!context.mounted) {
-            //     return;
-            //   }
-            //   showAlertDialog(
-            //     context: context,
-            //     title: '无法连接到WebDAV',
-            //     text: e.toString(),
-            //   );
-            //   return;
-            // }
-            final isar = await getIsar();
-            await isar.writeTxn(() async {
-              await isar.wDConfs.put(_conf);
-            });
-            if (!context.mounted) {
-              return;
-            }
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FileFirstPage(conf: _conf),
+              ),
+            );
           },
           child: Text('确定'),
         ),
